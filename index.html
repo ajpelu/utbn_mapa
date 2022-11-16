@@ -1,0 +1,132 @@
+
+<!doctype html>
+<html lang="es-ES"><head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+   <title>UTBN</title>
+
+<!-- Load Leaflet -->
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+	integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14="
+	crossorigin=""/>
+
+	<script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+	integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg="
+	crossorigin=""></script>
+
+
+<!-- Install leaflet-providersESP -->
+	<script src="https://cdn.jsdelivr.net/gh/dieghernan/leaflet-providersESP/dist/leaflet-providersESP.min.js"></script>
+
+	<!-- Install leaflet-gpx-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.4.0/gpx.min.js"></script>
+
+	<!-- Install leaflet-elevation -->
+	<link rel="stylesheet" href="https://unpkg.com/@raruto/leaflet-elevation/dist/leaflet-elevation.css" /> 
+	<script src="https://unpkg.com/@raruto/leaflet-elevation/dist/leaflet-elevation.js"></script>
+
+</head>
+
+<!-- Display map full page -->
+	<style>
+	html {
+		height: 100%
+	}
+	body {
+		height: 100%;
+		margin: 0;
+		padding: 0;
+	}
+	#map{
+		height: 100%;
+		width: 100%
+	}
+	</style>
+	
+	<style>
+	.data-summary {
+		font-family: "Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif;
+		font-size: 12px;
+		padding: 4px 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		text-align: center;
+		background-color: #000;
+		color: #fff;
+		}
+
+	.data-summary .summaryvalue {
+		font-weight: bold;
+	}
+
+	.elevation-summary {
+		display: none;
+	}
+
+</style>
+	<body><div id="map"></div>
+<script>
+
+    var mymap = L.map('map', {center: [37.053333,-3.81389],zoom: 11});
+	
+	var base = {'IGN': L.tileLayer.providerESP('IGNBase.Todo').addTo(mymap)};
+
+	var lidar = L.tileLayer.providerESP('LiDAR').addTo(mymap).remove();
+	var relieve = L.tileLayer.providerESP('MDT.Relieve').addTo(mymap);
+
+	var overlays = {
+		'Relieve': relieve,
+		'LIDAR': lidar
+	};
+
+	L.control.layers(base, overlays, {collapsed: false}).addTo(mymap);
+			
+			
+	var gpx = 'tracks/utbn2019.gpx';
+
+    new L.GPX(gpx, {async: true}).on('loaded', function(e) {
+    map.fitBounds(e.target.getBounds());
+    }).addTo(mymap);
+    
+	var elevation_options = {
+               theme: "lime-theme",
+               detached: false,
+               elevationDiv: "#elevation-div",
+			   collapse: true,
+               followMarker: true,
+               imperial: false,
+               reverseCoords: false,
+			   almostOver: true,
+			   time: false, 
+			   distance: true,
+			   aceleration: false, 
+			   slope: false,
+			   speed: false,  
+               summary: 'multiline',
+			   distanceMarkers: true,
+               downloadLink: true,
+               legend: false, 
+			   waypoints: true, 
+			   position: "bottomright",
+			   autofitBounds: true,
+			   hotline: false, 
+			   xAttr: "dist",
+			   xLabel: "km",
+			   yAttr: "z",
+			   yLabel: "m",
+
+			   gpxOptions: {
+				marker_options: {
+					startIconUrl: 'pin-icon-start.png',
+					endIconUrl: 'pin-icon-end.png',
+					shadowUrl: 'pin-shadow.png'}},
+             };
+	
+	var controlElevation = L.control.elevation(elevation_options).addTo(mymap);
+	controlElevation.load(gpx);
+
+
+</script>
+</body>
