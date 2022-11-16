@@ -2,6 +2,5 @@
 
 Este repositorio continene la visuzalización del track de la UTBN. 
 
-
-## Autor
+## Autor
 Antonio Jesús Pérez-Luque @ajpelu   
